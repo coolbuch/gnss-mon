@@ -2,32 +2,19 @@ import numpy
 from gnss_tec import rnx
 import datetime
 from time import localtime
-from gnss_tec.glo import collect_freq_nums
+from Data import Data
 import numpy as np
+import zmq
+
+context = zmq.Context()
+socket = context.socket(zmq.REQ)
+socket.connect("tcp://127.0.0.1:5555")
 
 path_to_file = "data/ugts3110.21o"
-generated_file = open("generated/generated_data_" + str(datetime.date.today()) + '_' + str(localtime().tm_hour)+ "_" + str(localtime().tm_min)+ "_" + str(localtime().tm_sec), 'w+')
+#generated_file = open("generated/generated_data_" + str(datetime.date.today()) + '_' + str(localtime().tm_hour)+ "_" + str(localtime().tm_min)+ "_" + str(localtime().tm_sec), 'w+')
 array = []
 
-class Data:
-    timestamp = None
-    satellite = None
-    phase_tec = None
-    p_range_tec = None
 
-    def __init__(self, timestamp, satellite, phase_tec, p_range_tec):
-        self.timestamp = timestamp
-        self.satellite = satellite
-        self.phase_tec = phase_tec
-        self.p_range_tec = p_range_tec
-
-    def to_str(self):
-        return '{} {}: {} {}'.format(
-            self.timestamp,
-            self.satellite,
-            self.phase_tec,
-            self.p_range_tec,
-        )
 
 #glo_freq_nums = collect_freq_nums(path_to_file)
 
@@ -38,8 +25,16 @@ with open(path_to_file) as obs_file:
         array.append(data)
 
 
-for i in array:
+#for i in array:
     #print(i.to_str())
-    generated_file.write(i.to_str() + "\n")
+    #generated_file.write(i.to_str() + "\n")
 
+counter = 0
+for i in array:
+    print("Sending request %s …" % i.to_str())
+    socket.send(i.to_str().encode('utf-8'))
 
+    #  Get the reply.
+    message = socket.recv()
+    #print("Received reply %s [ %s ]" % (request, message))
+    counter += 1
