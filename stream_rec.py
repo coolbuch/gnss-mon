@@ -2,9 +2,13 @@ from Data import Data
 import time
 import zmq
 
+ip = "192.168.56.246"
+port = "5555"
+protocol = "tcp"
+
 context = zmq.Context()
 socket = context.socket(zmq.REP)
-socket.bind("tcp://127.0.0.1:5555")
+socket.bind(protocol + "://" + ip + ":" + port)
 
 while True:
     #  Wait for next request from client

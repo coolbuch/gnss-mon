@@ -6,9 +6,13 @@ from Data import Data
 import numpy as np
 import zmq
 
+ip = "192.168.56.246"
+port = "5555"
+protocol = "tcp"
+
 context = zmq.Context()
 socket = context.socket(zmq.REQ)
-socket.connect("tcp://127.0.0.1:5555")
+socket.connect(protocol + "://" + ip + ":" + port)
 
 path_to_file = "data/ugts3110.21o"
 #generated_file = open("generated/generated_data_" + str(datetime.date.today()) + '_' + str(localtime().tm_hour)+ "_" + str(localtime().tm_min)+ "_" + str(localtime().tm_sec), 'w+')
